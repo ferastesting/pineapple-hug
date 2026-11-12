@@ -379,8 +379,10 @@
       if (!ac) {
         ac = new AC();
         var comp = ac.createDynamicsCompressor();
+        comp.threshold.value = -8; comp.knee.value = 4; comp.ratio.value = 20;
+        comp.attack.value = 0.002; comp.release.value = 0.15;
         master = ac.createGain();
-        master.gain.value = 0.9;
+        master.gain.value = 2.0;
         master.connect(comp); comp.connect(ac.destination);
       }
       if (ac.state === 'suspended') ac.resume();
@@ -433,7 +435,7 @@
     lfo.frequency.value = 6; lg.gain.value = 10;
     lfo.connect(lg); lg.connect(o.frequency);
     g.gain.setValueAtTime(0.0001, t);
-    g.gain.linearRampToValueAtTime(0.09, t + remain);
+    g.gain.linearRampToValueAtTime(0.18, t + remain);
     o.connect(g); g.connect(master);
     o.start(t); lfo.start(t);
     riser = { o: o, lfo: lfo, g: g };
@@ -455,10 +457,10 @@
     noise(0.9, 0.9, 7000, 250, 0);
     noise(0.12, 0.8, 9000, 2500, 0);
     var notes = [784, 988, 1175, 1319, 1568, 1976, 2349, 2637];
-    for (var i = 0; i < notes.length; i++) tone('sine', notes[i], notes[i], 1.1, 0.16, 0.14 + i * 0.07);
+    for (var i = 0; i < notes.length; i++) tone('sine', notes[i], notes[i], 1.1, 0.3, 0.14 + i * 0.07);
     for (var j = 0; j < 16; j++) {
       var f = 500 + Math.random() * 1100;
-      tone('sine', f, f * 0.4, 0.09, 0.1, 0.25 + Math.random() * 2.6);
+      tone('sine', f, f * 0.4, 0.09, 0.2, 0.25 + Math.random() * 2.6);
     }
   }
 
@@ -494,12 +496,12 @@
     var v = 0;
     fadeT = setInterval(function () {
       v += 0.04;
-      try { song.volume = Math.min(0.9, v); } catch (e) {}
-      if (v >= 0.9) clearInterval(fadeT);
+      try { song.volume = Math.min(1, v); } catch (e) {}
+      if (v >= 1) clearInterval(fadeT);
     }, 100);
   }
   songBtn.addEventListener('click', function () {
-    if (song.paused) { try { song.volume = 0.9; } catch (e) {} song.play(); }
+    if (song.paused) { try { song.volume = 1; } catch (e) {} song.play(); }
     else song.pause();
   });
 
