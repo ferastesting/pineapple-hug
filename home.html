@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f3dfc4">
+<title>Welcome home, Pineapple</title>
+<style>
+  :root { --cream:#f6e6cf; --cream-2:#efd7b6; --ink:#3a1f1a; --ink-soft:#6b4439; --red:#8f2a2a; --gold:#d9a441; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { margin:0; }
+  body {
+    min-height:100vh;
+    background:radial-gradient(120% 80% at 50% 0%, #fbf0dd 0%, var(--cream) 45%, var(--cream-2) 100%);
+    color:var(--ink);
+    font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+    line-height:1.55; padding:22px 18px 70px; overflow-x:hidden;
+  }
+  main { max-width:520px; margin:0 auto; }
+  .rise { opacity:0; transform:translateY(14px); animation:rise .8s ease forwards; }
+  @keyframes rise { to { opacity:1; transform:none; } }
+
+  .badge { text-align:center; font-size:.82rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); }
+  h1 { text-align:center; margin:6px 0 4px; font-size:1.9rem; line-height:1.15; color:var(--red); }
+  .sub { text-align:center; margin:0 0 18px; color:var(--ink-soft); }
+
+  .card { background:rgba(255,249,238,.8); border-radius:20px; padding:20px; box-shadow:0 6px 20px rgba(80,36,20,.10); margin-bottom:18px; }
+  .card p { margin:0 0 10px; font-size:1.04rem; }
+  .card p:last-child { margin-bottom:0; }
+
+  .meter-head { display:flex; justify-content:space-between; font-weight:700; margin-bottom:8px; }
+  .meter-head .pct { color:var(--red); }
+  .bar { height:22px; border-radius:999px; background:rgba(58,31,26,.12); overflow:hidden; box-shadow:inset 0 2px 4px rgba(0,0,0,.12); }
+  .fill { height:100%; width:100%; border-radius:999px; background:linear-gradient(90deg,#c63a2b,#e0702b 60%,#e8b23a); transition:width .55s cubic-bezier(.2,1.2,.4,1); }
+
+  .targets { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin:18px 0 6px; }
+  .tgt {
+    width:calc(33.333% - 8px); min-width:96px;
+    border:0; border-radius:18px; padding:12px 6px 10px; cursor:pointer;
+    background:#fff7ea; color:var(--ink); font:inherit; font-size:.86rem; font-weight:600;
+    box-shadow:0 6px 14px rgba(80,36,20,.16);
+    transition:transform .15s ease, opacity .4s ease, filter .4s ease;
+    animation:wiggle 2.4s ease-in-out infinite;
+    touch-action:manipulation;
+  }
+  .tgt:nth-child(2){ animation-delay:.3s } .tgt:nth-child(3){ animation-delay:.6s } .tgt:nth-child(4){ animation-delay:.9s } .tgt:nth-child(5){ animation-delay:1.2s } .tgt:nth-child(6){ animation-delay:.15s } .tgt:nth-child(7){ animation-delay:.75s } .tgt:nth-child(8){ animation-delay:1.05s }
+  .tgt .em { display:block; font-size:2.4rem; line-height:1.2; }
+  .tgt:active { transform:scale(.9); }
+  .tgt.hit { animation:smack .4s ease-out; opacity:.35; filter:grayscale(1); transform:scale(.88); pointer-events:none; }
+  @keyframes smack { 0% { transform:scale(1.18) rotate(-9deg); } 25% { transform:scale(1.1) rotate(8deg); } 50% { transform:scale(1) rotate(-5deg); } 100% { transform:scale(.88) rotate(0); } }
+  .tgt.hit .em { text-decoration:none; }
+  @keyframes wiggle { 0%,100%{ transform:rotate(-2deg) } 50%{ transform:rotate(2deg) } }
+
+  .toast { min-height:3.2em; text-align:center; font-weight:700; color:var(--red); margin:8px 4px 0; }
+
+  .reveal { display:none; }
+  .reveal.show { display:block; animation:rise .9s ease forwards; }
+  .reveal h2 { margin:0 0 8px; color:var(--red); font-size:1.4rem; }
+
+  .coupons { display:grid; gap:10px; margin:14px 0 4px; }
+  .coupon {
+    position:relative; text-align:left; border:2px dashed var(--gold); border-radius:16px;
+    background:#fff7ea; padding:12px 14px; font:inherit; color:var(--ink); cursor:pointer; overflow:hidden;
+  }
+  .coupon b { display:block; color:var(--red); margin-bottom:2px; }
+  .coupon span { font-size:.95rem; }
+  .coupon .stamp {
+    position:absolute; right:10px; top:50%; transform:translateY(-50%) rotate(-12deg) scale(2);
+    border:3px solid var(--red); color:var(--red); border-radius:8px; padding:2px 8px; font-weight:800; letter-spacing:.08em;
+    opacity:0; transition:all .25s ease; pointer-events:none; background:rgba(255,247,234,.9);
+  }
+  .coupon.claimed .stamp { opacity:1; transform:translateY(-50%) rotate(-12deg) scale(1); }
+  .coupon.claimed { border-style:solid; }
+
+  .group { margin:18px 0 4px; font-weight:800; color:var(--red); font-size:.95rem; letter-spacing:.05em; text-transform:uppercase; }
+  .shot { background:rgba(217,164,65,.2); border-radius:14px; padding:10px 12px; font-size:.95rem; margin:6px 0 10px; }
+  .coupon span { display:block; }
+  .coupon.claimed span { padding-right:84px; }
+  .sign { color:var(--ink-soft); font-weight:700; }
+  .ps { color:var(--ink-soft); font-size:.95rem; }
+  .again { margin-top:8px; border:0; background:var(--ink); color:#fff4e3; font:inherit; font-size:.98rem; padding:10px 20px; border-radius:999px; cursor:pointer; }
+
+  #fx { position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:20; }
+  @media (prefers-reduced-motion: reduce) { .tgt { animation:none !important; } .rise { animation-duration:.01s; } }
+</style>
+</head>
+<body>
+<main>
+
+  <div class="badge rise">Mango Express · Emergency delivery</div>
+  <h1 class="rise" style="animation-delay:.1s">Welcome home, Pineapple 🍍</h1>
+  <p class="sub rise" style="animation-delay:.2s">Order status: waiting for you to defeat today</p>
+
+  <section class="card rise" style="animation-delay:.3s">
+    <p>I know today was a lot. Three hours of walking, the sun, the crowds, a scammer, a sore back, nothing good in the shops, and me being so far away. I'd be grumpy too.</p>
+    <p>Before anything else, take your shoes off, then hit the things that ruined your day. They deserve it.</p>
+  </section>
+
+  <section class="card rise" style="animation-delay:.4s">
+    <div class="meter-head"><span>Today's annoyance level</span><span class="pct" id="pct">100%</span></div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+
+    <div class="targets" id="targets">
+      <button class="tgt" data-msg="The sun has been sent to its room."><span class="em">☀️</span>The sun</button>
+      <button class="tgt" data-msg="The market lost today. Not you."><span class="em">🏪</span>The market</button>
+      <button class="tgt" data-msg="Crowds deleted."><span class="em">👥</span>The crowds</button>
+      <button class="tgt" data-msg="The gas guy has been reported. No cylinders were thrown today, and Mango is proud of your self control 😌"><span class="em"><svg width="38" height="44" viewBox="0 0 40 48" aria-hidden="true" style="display:block;margin:0 auto"><rect x="12" y="3" width="16" height="2.5" rx="1.2" fill="#6f747d"/><rect x="15" y="4.5" width="10" height="5" rx="2" fill="#8a8f98"/><rect x="17" y="9" width="6" height="4" fill="#b8bcc4"/><path d="M8 21 Q8 13 17 13 H23 Q32 13 32 21 V40 Q32 46 26 46 H14 Q8 46 8 40 Z" fill="#d8432b" stroke="#8f2a2a" stroke-width="1.5"/><rect x="8.8" y="26" width="22.4" height="10" fill="#fff3e0"/><path d="M20 27.5 Q24.5 31 22.3 34.3 Q20 36.3 17.7 34.3 Q15.5 31 20 27.5 Z" fill="#e8662b"/><rect x="11.5" y="17" width="3" height="25" rx="1.5" fill="rgba(255,255,255,.35)"/></svg></span>The gas scammer</button>
+      <button class="tgt" data-msg="Three hours of walking is officially over. You can stop now."><span class="em">🥵</span>3 hours of walking</button>
+      <button class="tgt" data-msg="Back pain, gone. Go get a hot water bottle, doctor Mango's orders."><span class="em">😖</span>Back pain</button>
+      <button class="tgt" data-msg="Tired feet. Mango would be rubbing them right now."><span class="em">🦶</span>Tired feet</button>
+      <button class="tgt" data-msg="Mango being far away. It's the thing Mango hates most about today. I'm holding you tight from here until I can do it for real."><span class="em">🥭</span>Mango being far away</button>
+    </div>
+    <div class="toast" id="toast" aria-live="polite">Hit them. Go ahead.</div>
+  </section>
+
+  <section class="card reveal" id="reveal">
+    <h2>Nicely done, Pineapple 🖤</h2>
+    <p>I can't be at the door with a hug, so here's what I can give you instead. Tap to claim whatever you like.</p>
+
+    <div class="group">Confirmed delivery within 48 hours</div>
+    <div class="shot">📸 Screenshot whatever you claim and send it to me on WhatsApp. Mango Express will deliver it within the next 48 hours.</div>
+    <div class="coupons">
+      <button class="coupon" type="button"><b>Complaint desk, always open</b><span>Mango's only replies are "you're right" and "I'm sorry".</span><i class="stamp">CLAIMED</i></button>
+      <button class="coupon" type="button"><b>500 black hearts in Mango Express</b><span>Credited to your account in the app. Spend them on anything you like. 🖤</span><i class="stamp">CLAIMED</i></button>
+      <button class="coupon" type="button"><b>Mango sings you a song</b><span>A voice note, just for you. Off key and proud of it.</span><i class="stamp">CLAIMED</i></button>
+      <button class="coupon" type="button"><b>One very handsome photo of Mango</b><span>Sent on WhatsApp, no questions asked. 😏</span><i class="stamp">CLAIMED</i></button>
+      <button class="coupon" type="button"><b>One spicy photo of Mango</b><span>For your eyes only. Sent on WhatsApp as view once. 🌶️</span><i class="stamp">CLAIMED</i></button>
+      <button class="coupon" type="button"><b>Movie night on a call</b><span>You pick the movie, you pick the snacks, Mango just agrees with everything.</span><i class="stamp">CLAIMED</i></button>
+      <button class="coupon" type="button"><b>Fall asleep on a call</b><span>Mango stays on the line until you drift off.</span><i class="stamp">CLAIMED</i></button>
+      <button class="coupon" type="button"><b>One argument win</b><span>Valid once, on any topic. Mango will lose gracefully.</span><i class="stamp">CLAIMED</i></button>
+    </div>
+
+    <div class="group">Collected in person</div>
+    <div class="coupons">
+      <button class="coupon" type="button"><b>One very long hug</b><span>No expiry date.</span><i class="stamp">CLAIMED</i></button>
+      <button class="coupon" type="button"><b>One tummy rub and one back rub</b><span>Same terms as the hug.</span><i class="stamp">CLAIMED</i></button>
+      <button class="coupon" type="button"><b>Chocolate delivery</b><span>Arrives the moment I'm there. I'm keeping count.</span><i class="stamp">CLAIMED</i></button>
+    </div>
+
+    <p style="margin-top:16px">You yelled at me today and I'm completely fine with it. You can do it again tomorrow. I'm still on your side, always.</p>
+    <p>And next time you go shopping, I'll be on a video call as your personal stylist. No rushing, no stress, we'll find you something you love.</p>
+    <p class="sign">I love you, Pineapple. 🖤<br>Your Mango</p>
+    <p class="ps">P.S. I'll accept "I love you more" whenever you're ready. No pressure 😌</p>
+    <button class="again" id="again" type="button">Play again</button>
+  </section>
+
+</main>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script>
+(function () {
+  var targets = Array.prototype.slice.call(document.querySelectorAll('.tgt'));
+  var fill = document.getElementById('fill');
+  var pct = document.getElementById('pct');
+  var toast = document.getElementById('toast');
+  var reveal = document.getElementById('reveal');
+  var again = document.getElementById('again');
+  var coupons = Array.prototype.slice.call(document.querySelectorAll('.coupon'));
+  var canvas = document.getElementById('fx');
+  var ctx = canvas.getContext('2d');
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hits = 0, total = targets.length;
+
+  function vib(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+
+  /* ---------- sound (synthesized) ---------- */
+  var AC = window.AudioContext || window.webkitAudioContext;
+  var ac = null, master = null;
+  function initAudio() {
+    if (!AC) return;
+    try {
+      if (!ac) {
+        ac = new AC();
+        var comp = ac.createDynamicsCompressor();
+        comp.threshold.value = -8; comp.knee.value = 4; comp.ratio.value = 20;
+        comp.attack.value = 0.002; comp.release.value = 0.15;
+        master = ac.createGain(); master.gain.value = 2.0;
+        master.connect(comp); comp.connect(ac.destination);
+      }
+      if (ac.state === 'suspended') ac.resume();
+    } catch (e) { ac = null; }
+  }
+  function tone(type, f0, f1, dur, vol, when) {
+    if (!ac) return;
+    var t = ac.currentTime + (when || 0);
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(f0, t);
+    if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(master);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  function noise(dur, vol, f0, f1, when) {
+    if (!ac) return;
+    var t = ac.currentTime + (when || 0);
+    var n = Math.floor(ac.sampleRate * dur);
+    var buf = ac.createBuffer(1, n, ac.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    var s = ac.createBufferSource(); s.buffer = buf;
+    var fl = ac.createBiquadFilter(); fl.type = 'lowpass';
+    fl.frequency.setValueAtTime(f0, t); fl.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    var g = ac.createGain();
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(fl); fl.connect(g); g.connect(master);
+    s.start(t);
+  }
+  var SCALE = [523, 587, 659, 784, 880, 1047];
+  function bonk(i) {
+    var f = SCALE[i % SCALE.length];
+    tone('triangle', 420, 120, 0.16, 0.9, 0);
+    noise(0.07, 0.9, 3500, 400, 0);
+    tone('sine', f, f, 0.5, 0.3, 0.08);
+    tone('sine', f * 2, f * 2, 0.4, 0.14, 0.1);
+  }
+  function victory() {
+    noise(0.7, 0.8, 7000, 300, 0);
+    tone('sine', 220, 70, 0.5, 0.9, 0);
+    var notes = [523, 659, 784, 1047, 1319, 1568, 2093];
+    for (var i = 0; i < notes.length; i++) tone('sine', notes[i], notes[i], 1.0, 0.3, 0.12 + i * 0.09);
+    for (var j = 0; j < 10; j++) { var f = 600 + Math.random() * 1100; tone('sine', f, f * 0.4, 0.09, 0.2, 0.3 + Math.random() * 1.8); }
+  }
+  function stampSfx() { tone('triangle', 300, 90, 0.12, 0.8, 0); noise(0.05, 0.6, 2500, 400, 0); tone('sine', 1047, 1047, 0.4, 0.25, 0.07); }
+
+  /* ---------- particles ---------- */
+  var parts = [], W = 0, H = 0, running = false, lastT = 0, rainUntil = 0, nextRain = 0, dpr = 1;
+  var BIG = ['🖤', '🥭', '🍍', '🖤', '🥭', '🍍', '🖤'];
+  var SMALL = ['💥', '💢', '💫', '⭐', '👊'];
+  var SPARK = ['✨', '🖤', '⭐'];
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener('resize', resize); resize();
+
+  function burst(cx, cy, n, set, speed) {
+    if (reduce) n = Math.ceil(n / 3);
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * Math.PI * 2, sp = (0.4 + Math.random() * 0.6) * speed;
+      parts.push({ e: set[Math.floor(Math.random() * set.length)], x: cx, y: cy,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2, g: 0.16 + Math.random() * 0.08, drag: 0.985,
+        size: 20 + Math.random() * 24, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.25,
+        life: 1.6 + Math.random() * 1.4, age: 0 });
+    }
+    startLoop();
+  }
+  function rainOne() {
+    parts.push({ e: BIG[Math.floor(Math.random() * BIG.length)], x: Math.random() * W, y: -40,
+      vx: (Math.random() - 0.5) * 1.2, vy: 1.6 + Math.random() * 2.6, g: 0.01, drag: 1,
+      size: 20 + Math.random() * 22, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.1,
+      life: 4 + Math.random() * 2, age: 0, sway: Math.random() * 6.28 });
+  }
+  function loop(t) {
+    var dt = Math.min(0.05, (t - lastT) / 1000 || 0.016); lastT = t;
+    var k = dt * 60;
+    ctx.clearRect(0, 0, W, H);
+    if (t < rainUntil && t > nextRain && parts.length < 240) { rainOne(); if (!reduce) rainOne(); nextRain = t + 70; }
+    for (var i = parts.length - 1; i >= 0; i--) {
+      var p = parts[i]; p.age += dt;
+      if (p.age >= p.life || p.y > H + 60) { parts.splice(i, 1); continue; }
+      p.vx *= Math.pow(p.drag, k); p.vy = p.vy * Math.pow(p.drag, k) + p.g * k;
+      if (p.sway !== undefined) p.x += Math.sin(p.age * 3 + p.sway) * 0.7 * k;
+      p.x += p.vx * k; p.y += p.vy * k; p.rot += p.vr * k;
+      var left = p.life - p.age, alpha = left < 0.6 ? left / 0.6 : 1;
+      ctx.save(); ctx.globalAlpha = Math.max(0, alpha); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.font = Math.round(p.size) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(p.e, 0, 0); ctx.restore();
+    }
+    if (parts.length || t < rainUntil) requestAnimationFrame(loop);
+    else { running = false; ctx.clearRect(0, 0, W, H); }
+  }
+  function startLoop() { if (running) return; running = true; lastT = performance.now(); requestAnimationFrame(loop); }
+
+  /* ---------- game ---------- */
+  function setBar() {
+    var left = Math.round((total - hits) / total * 100);
+    fill.style.width = left + '%';
+    pct.textContent = left + '%';
+  }
+
+  function onHit(btn) {
+    if (btn.classList.contains('hit')) return;
+    initAudio();
+    btn.classList.add('hit');
+    var r = btn.getBoundingClientRect();
+    bonk(hits);
+    burst(r.left + r.width / 2, r.top + r.height / 2, 16, SMALL, 9);
+    vib(40);
+    toast.textContent = btn.getAttribute('data-msg');
+    hits++; setBar();
+    if (hits >= total) setTimeout(complete, 650);
+  }
+
+  function complete() {
+    victory(); vib([100, 60, 100, 60, 220]);
+    burst(W / 2, H * 0.45, 70, BIG, 13);
+    setTimeout(function () { burst(W / 2, H * 0.45, 40, BIG, 11); }, 250);
+    rainUntil = performance.now() + (reduce ? 1000 : 3000); nextRain = performance.now() + 400; startLoop();
+    toast.textContent = "Annoyance level: 0%. Calm level: 100% 🍍";
+    reveal.classList.add('show');
+    setTimeout(function () { reveal.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 700);
+  }
+
+  targets.forEach(function (b) { b.addEventListener('click', function () { onHit(b); }); });
+
+  coupons.forEach(function (c) {
+    c.addEventListener('click', function () {
+      if (c.classList.contains('claimed')) return;
+      initAudio(); stampSfx(); vib(30);
+      c.classList.add('claimed');
+      var r = c.getBoundingClientRect();
+      burst(r.left + r.width - 40, r.top + r.height / 2, 14, SPARK, 8);
+    });
+  });
+
+  again.addEventListener('click', function () {
+    hits = 0; setBar();
+    targets.forEach(function (b) { b.classList.remove('hit'); });
+    coupons.forEach(function (c) { c.classList.remove('claimed'); });
+    reveal.classList.remove('show');
+    toast.textContent = 'Hit them. Go ahead.';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+</body>
+</html>
